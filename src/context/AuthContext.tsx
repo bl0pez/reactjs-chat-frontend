@@ -2,6 +2,7 @@ import { fetchSinToken } from "@/helpers";
 import {
   AuthState,
   LoginData,
+  LoginResponse,
   RegisterData,
   User,
   UserState,
@@ -18,12 +19,27 @@ export const AuthProvider = ({ children }: Props) => {
   const [auth, setAuth] = useState<UserState>({ user: null });
 
   const login = async ({ email, password }: LoginData) => {
-    const res = await fetchSinToken('auth/login', { email, password }, 'POST');
-    console.log(res);
+    try {
+      const res: LoginResponse = await fetchSinToken(
+        "auth/login",
+        { email, password },
+        "POST"
+      );
+
+      localStorage.setItem("token", res.token);
+
+      setAuth({ user: res.user });
+    } catch (error) {
+      throw new Error(error);
+    }
   };
 
   const register = async ({ email, password, name }: RegisterData) => {
-    const res = await fetchSinToken('register', { email, password, name }, 'POST');
+    const res = await fetchSinToken(
+      "register",
+      { email, password, name },
+      "POST"
+    );
   };
 
   const verifyToken = useCallback(() => {}, []);

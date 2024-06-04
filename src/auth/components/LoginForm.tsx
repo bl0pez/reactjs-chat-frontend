@@ -10,6 +10,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -24,6 +25,7 @@ export type LoginFormValues = z.infer<typeof formSchema>;
 
 export const LoginForm = () => {
 
+   const { toast } = useToast();
   const  { login } = useAuth();
 
   const form = useForm<LoginFormValues>({
@@ -34,11 +36,15 @@ export const LoginForm = () => {
     },
   });
 
-  const onSubmit = (values: LoginFormValues) => {
-    login({
-      email: values.email,
-      password: values.password,
-    });
+  const onSubmit = async (values: LoginFormValues) => {
+    try {
+      await login(values);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Credenciales incorrectas",
+      });
+    }
   };
 
   return (
@@ -77,7 +83,7 @@ export const LoginForm = () => {
             </FormItem>
           )}
         />
-        <Button type="submit" size="full">
+        <Button type="submit" size="full" disabled={form.formState.isSubmitting}>
             Iniciar sesión
         </Button>
       </form>
