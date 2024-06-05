@@ -10,7 +10,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner"
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -24,9 +24,7 @@ const formSchema = z.object({
 export type LoginFormValues = z.infer<typeof formSchema>;
 
 export const LoginForm = () => {
-
-   const { toast } = useToast();
-  const  { login } = useAuth();
+  const { login } = useAuth();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(formSchema),
@@ -40,10 +38,9 @@ export const LoginForm = () => {
     try {
       await login(values);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Credenciales incorrectas",
-      });
+      if (error instanceof Error) {
+        toast.error(error.message, { position: "top-right" });
+      }
     }
   };
 
@@ -56,9 +53,7 @@ export const LoginForm = () => {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
-                Correo electrónico
-              </FormLabel>
+              <FormLabel>Correo electrónico</FormLabel>
               <FormControl>
                 <Input type="email" placeholder="prueba@gmail.com" {...field} />
               </FormControl>
@@ -73,9 +68,7 @@ export const LoginForm = () => {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
-                Contraseña
-              </FormLabel>
+              <FormLabel>Contraseña</FormLabel>
               <FormControl>
                 <Input type="password" placeholder="12345678" {...field} />
               </FormControl>
@@ -83,8 +76,12 @@ export const LoginForm = () => {
             </FormItem>
           )}
         />
-        <Button type="submit" size="full" disabled={form.formState.isSubmitting}>
-            Iniciar sesión
+        <Button
+          type="submit"
+          size="full"
+          disabled={form.formState.isSubmitting}
+        >
+          Iniciar sesión
         </Button>
       </form>
     </Form>

@@ -1,13 +1,15 @@
-import { fetchSinToken } from "@/helpers";
+import { fetchConToken, fetchSinToken, getLocalStorage, removeLocalStorage, setLocalStorage } from "@/helpers";
 import {
   AuthState,
   LoginData,
-  LoginResponse,
+  AuthResponse,
   RegisterData,
-  User,
   UserState,
+  User,
+  CheckStatus,
+  LocalStorageKeys,
 } from "@/interfaces";
-import { createContext, useCallback, useContext, useState } from "react";
+import { createContext, useCallback, useState } from "react";
 
 interface Props {
   children: React.ReactNode;
@@ -15,42 +17,97 @@ interface Props {
 
 export const AuthContext = createContext<AuthState>({} as AuthState);
 
+const initialUserState: User = {
+  id: null,
+  createdAt: null,
+  email: null,
+  name: null,
+  online: false,
+  updatedAt: null,
+}
+
 export const AuthProvider = ({ children }: Props) => {
-  const [auth, setAuth] = useState<UserState>({ user: null });
+  const [auth, setAuth] = useState<UserState>({ user: initialUserState });
+  const [checking, setChecking] = useState<CheckStatus>(CheckStatus.Pending);
 
   const login = async ({ email, password }: LoginData) => {
-    try {
-      const res: LoginResponse = await fetchSinToken(
-        "auth/login",
-        { email, password },
-        "POST"
-      );
+    const { data, errorMessage } = await fetchSinToken<AuthResponse>({
+      endpoint: "auth/login",
+      method: "POST",
+      data: { email, password },
+    });
 
-      localStorage.setItem("token", res.token);
+    if ( data !== null) {
 
-      setAuth({ user: res.user });
-    } catch (error) {
-      throw new Error(error);
+      const  { user, token } = data;
+
+      setAuth({ user: user });
+      setLocalStorage<string>(LocalStorageKeys.Token, token);
+      setChecking(CheckStatus.LoggedIn);
+      return;
     }
+
+    throw new Error(errorMessage);
   };
 
   const register = async ({ email, password, name }: RegisterData) => {
-    const res = await fetchSinToken(
-      "register",
-      { email, password, name },
-      "POST"
-    );
+    const { data, errorMessage } = await fetchSinToken<AuthResponse>({
+      endpoint: "auth/register",
+      method: "POST",
+      data: { email, password, name },
+    });
+
+    if (data !== null) {
+      setAuth({ user: data.user });
+      setLocalStorage<string>(LocalStorageKeys.Token, data.token);
+      setChecking(CheckStatus.LoggedIn);
+      return;
+    }
+
+    throw new Error(errorMessage);
+
   };
 
-  const verifyToken = useCallback(() => {}, []);
+  const verifyToken = useCallback(async () => {
+    const token = getLocalStorage<string>(LocalStorageKeys.Token);
+    
+    if (!token) {
+      setChecking(CheckStatus.LoggedOut);
+      setAuth({ user: initialUserState });
+      return;
+    }
+
+    const { data } = await fetchConToken<AuthResponse>({
+      endpoint: "auth/renewToken",
+      method: "GET",
+    });
+
+    if (data !== null) {
+      setAuth({ user: data.user });
+      setLocalStorage<string>(LocalStorageKeys.Token, data.token);
+      setChecking(CheckStatus.LoggedIn);
+      return;
+    }
+
+    removeLocalStorage(LocalStorageKeys.Token);
+    setChecking(CheckStatus.LoggedOut);
+  }, []);
+
+  const logout = () => {
+    removeLocalStorage(LocalStorageKeys.Token);
+    setAuth({ user: initialUserState });
+    setChecking(CheckStatus.LoggedOut);
+  }
 
   return (
     <AuthContext.Provider
       value={{
         user: auth.user,
+        checking,
         login,
         register,
         verifyToken,
+        logout,
       }}
     >
       {children}

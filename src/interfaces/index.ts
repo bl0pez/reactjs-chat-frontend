@@ -1,13 +1,39 @@
-export interface LoginResponse {
+export enum LocalStorageKeys {
+  Token = "token",
+}
+
+
+export enum CheckStatus {
+  Pending = "Pending",
+  LoggedIn = "LoggedIn",
+  LoggedOut = "LoggedOut",
+}
+
+export interface FetchResponse<T> {
+  data: T | null;
+  errorMessage?: string;
+  status: number;
+}
+
+export interface ApiRequest {
+  endpoint: string;
+  data?: object;
+  method: "GET" | "POST" | "PATCH" | "DELETE";
+  token?: string;
+}
+
+export interface AuthResponse {
   user: User;
   token: string;
 }
 
 export interface AuthState {
+  checking: CheckStatus;
   user: User | null;
   login: (data: LoginData) => Promise<void>;
-  register: (data: RegisterData) => void;
+  register: (data: RegisterData) => Promise<void>;
   verifyToken: () => void;
+  logout: () => void;
 }
 
 export interface UserState {
@@ -15,12 +41,12 @@ export interface UserState {
 }
 
 export interface User {
-  id: string;
-  name: string;
-  email: string;
+  id: string | null;
+  name: string | null;
+  email: string | null;
   online: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: Date | null;
+  updatedAt: Date | null;
 }
 
 export interface LoginData {

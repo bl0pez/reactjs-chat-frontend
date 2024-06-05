@@ -1,13 +1,12 @@
-import { RouterProvider } from "react-router-dom";
-import { router } from "./routes";
 import { AuthProvider } from "./context/AuthContext";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner"
+import MainRoutes from "./routes/MainRoutes";
 
 export const App = () => {
   return (
     <AuthProvider>
-      <RouterProvider router={router} />
-      <Toaster />
+      <MainRoutes />
+      <Toaster richColors />
     </AuthProvider>
   );
 };

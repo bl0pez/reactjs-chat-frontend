@@ -11,6 +11,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner"
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -25,6 +27,9 @@ const formSchema = z.object({
 export type RegisterFormValues = z.infer<typeof formSchema>;
 
 export const RegisterForm = () => {
+
+  const { register } = useAuth();
+
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -34,8 +39,14 @@ export const RegisterForm = () => {
     },
   });
 
-  const onSubmit = (values: RegisterFormValues) => {
-    console.log(values);
+  const onSubmit = async (values: RegisterFormValues) => {
+    try {
+      await register(values);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message, { position: "top-right" });
+      }
+    }
   };
 
   return (
@@ -47,7 +58,9 @@ export const RegisterForm = () => {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Correo electrónico</FormLabel>
+              <FormLabel>
+                Nombre
+              </FormLabel>
               <FormControl>
                 <Input
                   type="text"
