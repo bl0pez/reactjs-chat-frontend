@@ -2,14 +2,27 @@ import clsx from "clsx";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { User } from "@/interfaces";
+import { useChat } from "@/hooks/useChat";
 
 interface Props {
   user: User;
 }
 
 export const SidebarChatItem = ({ user }: Props) => {
+  const { chatState, dispatch } = useChat();
+
+  const handleChatClick = () => {
+    dispatch({ type: "SelectChat", payload: { id: user.id! } });
+  };
+
   return (
-    <div>
+    <div
+      className={clsx(
+        "cursor-pointer transition-all bg-white",
+        chatState.chatActive === user.id && "bg-gray-200"
+      )}
+      onClick={handleChatClick}
+    >
       <div className="flex gap-2 items-center py-2 px-3">
         <Avatar
           className={clsx(
