@@ -1,5 +1,5 @@
-export enum LocalStorageKeys {
-  Token = "token",
+export interface LocalStorageKeys {
+  key: "token" | "user";
 }
 
 
@@ -30,6 +30,7 @@ export interface AuthResponse {
 export interface AuthState {
   checking: CheckStatus;
   user: User | null;
+  socketConnected: boolean;
   login: (data: LoginData) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
   verifyToken: () => void;

@@ -7,7 +7,6 @@ import {
   UserState,
   User,
   CheckStatus,
-  LocalStorageKeys,
 } from "@/interfaces";
 import { createContext, useCallback, useState } from "react";
 
@@ -28,6 +27,7 @@ const initialUserState: User = {
 
 export const AuthProvider = ({ children }: Props) => {
   const [auth, setAuth] = useState<UserState>({ user: initialUserState });
+  const [socketConnected, setSocketConnected] = useState<boolean>(false);
   const [checking, setChecking] = useState<CheckStatus>(CheckStatus.Pending);
 
   const login = async ({ email, password }: LoginData) => {
@@ -38,11 +38,13 @@ export const AuthProvider = ({ children }: Props) => {
     });
 
     if ( data !== null) {
-
       const  { user, token } = data;
-
       setAuth({ user: user });
-      setLocalStorage<string>(LocalStorageKeys.Token, token);
+      setSocketConnected(true);
+      setLocalStorage<string>({
+        key: "token",
+        value: token,
+      });
       setChecking(CheckStatus.LoggedIn);
       return;
     }
@@ -59,7 +61,11 @@ export const AuthProvider = ({ children }: Props) => {
 
     if (data !== null) {
       setAuth({ user: data.user });
-      setLocalStorage<string>(LocalStorageKeys.Token, data.token);
+      setSocketConnected(true);
+      setLocalStorage<string>({
+        key: "token",
+        value: data.token,
+      });
       setChecking(CheckStatus.LoggedIn);
       return;
     }
@@ -69,11 +75,10 @@ export const AuthProvider = ({ children }: Props) => {
   };
 
   const verifyToken = useCallback(async () => {
-    const token = getLocalStorage<string>(LocalStorageKeys.Token);
+    const token = getLocalStorage<string>({ key: "token"});
     
     if (!token) {
-      setChecking(CheckStatus.LoggedOut);
-      setAuth({ user: initialUserState });
+      logout();
       return;
     }
 
@@ -84,17 +89,23 @@ export const AuthProvider = ({ children }: Props) => {
 
     if (data !== null) {
       setAuth({ user: data.user });
-      setLocalStorage<string>(LocalStorageKeys.Token, data.token);
+      setSocketConnected(true);
+      setLocalStorage<string>({
+        key: "token",
+        value: data.token,
+      });
       setChecking(CheckStatus.LoggedIn);
       return;
     }
 
-    removeLocalStorage(LocalStorageKeys.Token);
-    setChecking(CheckStatus.LoggedOut);
+    logout();
   }, []);
 
   const logout = () => {
-    removeLocalStorage(LocalStorageKeys.Token);
+    removeLocalStorage({
+      key: "token",
+    });
+    setSocketConnected(false);
     setAuth({ user: initialUserState });
     setChecking(CheckStatus.LoggedOut);
   }
@@ -104,6 +115,7 @@ export const AuthProvider = ({ children }: Props) => {
       value={{
         user: auth.user,
         checking,
+        socketConnected,
         login,
         register,
         verifyToken,

@@ -49,7 +49,9 @@ export const fetchConToken = async <T>({
   data,
 }: ApiRequest): Promise<FetchResponse<T>> => {
   const url = `${import.meta.env.VITE_BACKEND_URL}/${endpoint}`;
-  const token = getLocalStorage<string>("token");
+  const token = getLocalStorage<string>({
+    key: "token"
+  });
 
   const options: RequestInit = {
     method,
