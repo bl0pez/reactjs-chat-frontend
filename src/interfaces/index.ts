@@ -1,9 +1,8 @@
 export interface ChatState {
-  id: string;
+  id: string | null;
   chatActive: string | null;
   users: User[];
   messages: Message[];
-
 }
 
 export interface LocalStorageKeys {

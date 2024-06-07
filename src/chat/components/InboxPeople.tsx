@@ -9,12 +9,25 @@ export const InboxPeople = () => {
 
   return (
     <>
-      <div className="flex-1 p-4 gap-4 flex flex-col overflow-y-auto">
+      <div
+        id="messages"
+        className="flex-1 p-4 gap-4 flex flex-col overflow-y-auto"
+      >
         {chatState.messages.map((msg) =>
-          (msg.from === user?.id) ? (
-            <Message key={msg.id} text={msg.message} date={msg.createdAt} position="end" />
+          msg.from === user?.id ? (
+            <Message
+              key={msg.id}
+              text={msg.message}
+              date={msg.createdAt}
+              position="end"
+            />
           ) : (
-            <Message key={msg.id} text={msg.message} date={msg.createdAt} position="start" />
+            <Message
+              key={msg.id}
+              text={msg.message}
+              date={msg.createdAt}
+              position="start"
+            />
           )
         )}
 
@@ -23,10 +36,7 @@ export const InboxPeople = () => {
 
       <Separator />
 
-      <TextMessage
-        placeholder="Type a message..."
-        disableCorrections
-      />
+      <TextMessage placeholder="Type a message..." disableCorrections />
     </>
   );
 };

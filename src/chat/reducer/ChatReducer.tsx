@@ -3,7 +3,8 @@ import { ChatState, Message, User } from "@/interfaces";
 export type ChatAction =
   | { type: "SaveUsers"; payload: User[] }
   | { type: "SelectChat"; payload: { id: string } }
-  | { type: "NewMessage"; payload: Message };
+  | { type: "NewMessage"; payload: Message }
+  | { type: "LoadMessages"; payload: Message[] };
 export const chatReducer = (
   state: ChatState,
   action: ChatAction
@@ -34,7 +35,11 @@ export const chatReducer = (
       } else {
         return state;
       }
-
+    case "LoadMessages":
+      return {
+        ...state,
+        messages: action.payload,
+      }
     default:
       return state;
   }

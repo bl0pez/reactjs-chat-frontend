@@ -2,7 +2,8 @@ import clsx from "clsx";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { useChatContext } from "@/hooks";
-import { User } from "@/interfaces";
+import { Message, User } from "@/interfaces";
+import { fetchConToken } from "@/helpers";
 
 interface Props {
   user: User;
@@ -11,8 +12,21 @@ interface Props {
 export const SidebarChatItem = ({ user }: Props) => {
   const { chatState, dispatch } = useChatContext();
 
-  const handleChatClick = () => {
+  const handleChatClick = async() => {
+
+    if (chatState.chatActive === user.id) return;
+
     dispatch({ type: "SelectChat", payload: { id: user.id! } });
+
+    // Cargar mensajes del chat seleccionado
+    const { data, errorMessage } = await fetchConToken<Message[]>({
+      endpoint: `message/${user.id}`,
+      method: 'GET'
+    });
+
+    if (errorMessage) return;
+
+    dispatch({ type: "LoadMessages", payload: data! })
   };
 
   return (

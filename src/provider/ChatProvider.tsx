@@ -8,7 +8,7 @@ interface ChatProviderProps {
 }
 
 const initialState: ChatState = {
-    id: "",
+    id: null,
     chatActive: null,
     users: [],
     messages: [],
