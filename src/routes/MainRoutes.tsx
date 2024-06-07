@@ -1,11 +1,11 @@
 import { RouterProvider } from "react-router-dom";
 import { router } from ".";
-import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 import { CheckStatus } from "@/interfaces";
+import { useAuthContext } from "@/hooks";
 
 export default function MainRoutes() {
-  const { verifyToken, checking } = useAuth();
+  const { verifyToken, checking } = useAuthContext();
 
   useEffect(() => {
     verifyToken();

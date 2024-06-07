@@ -1,3 +1,11 @@
+export interface ChatState {
+  id: string;
+  chatActive: string | null;
+  users: User[];
+  messages: Message[];
+
+}
+
 export interface LocalStorageKeys {
   key: "token" | "user";
 }
@@ -48,6 +56,15 @@ export interface User {
   online: boolean;
   createdAt: Date | null;
   updatedAt: Date | null;
+}
+
+export interface Message {
+  id: string;
+  from: string;
+  to: string;
+  message: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface LoginData {
