@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner"
 import { Input } from "@/components/ui/input";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from "@/hooks";
 
 const formSchema = z.object({
   email: z.string().email("El correo electrónico no es válido"),
@@ -24,7 +24,7 @@ const formSchema = z.object({
 export type LoginFormValues = z.infer<typeof formSchema>;
 
 export const LoginForm = () => {
-  const { login } = useAuth();
+  const { login } = useAuthContext();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(formSchema),

@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -10,9 +11,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useAuthContext } from "@/hooks";
 import { Input } from "@/components/ui/input";
-import { useAuth } from "@/hooks/useAuth";
-import { toast } from "sonner"
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -28,7 +28,7 @@ export type RegisterFormValues = z.infer<typeof formSchema>;
 
 export const RegisterForm = () => {
 
-  const { register } = useAuth();
+  const { register } = useAuthContext();
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(formSchema),
@@ -64,9 +64,7 @@ export const RegisterForm = () => {
               <FormControl>
                 <Input
                   type="text"
-                  placeholder="
-                  John Doe
-                "
+                  placeholder="John Doe"
                   {...field}
                 />
               </FormControl>

@@ -1,10 +1,10 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { Sidebar } from "../components/Sidebar";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from "@/hooks";
 
 export default function ChatLayout() {
 
-  const { user } = useAuth();
+  const { user } = useAuthContext();
 
   if (!user?.id) return <Navigate to="/auth/login" />;
 
