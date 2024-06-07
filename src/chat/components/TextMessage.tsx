@@ -1,25 +1,33 @@
+import { useContext, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { SocketContext } from "@/context/SocketContext";
+import { useAuthContext, useChatContext } from "@/hooks";
 
 interface Props {
-  onSendMessage: (message: string) => void;
   placeholder: string;
   disableCorrections?: boolean;
 }
 
 export const TextMessage = ({
-  onSendMessage,
   placeholder,
   disableCorrections,
 }: Props) => {
   const [message, setMessage] = useState("");
+  const { socket } = useContext(SocketContext);
+  const { user } = useAuthContext();
+  const { chatState } = useChatContext();
 
   const handleSendMessage = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (message.trim().length === 0) return;
 
-    onSendMessage(message);
+    socket?.emit("private-message", {
+      from: user?.id,
+      to: chatState?.chatActive,
+      message,
+    })
+
     setMessage("");
   };
 

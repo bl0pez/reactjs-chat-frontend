@@ -1,18 +1,20 @@
 import { Separator } from "@/components/ui/separator";
 import { Message } from "./Message";
 import { TextMessage } from "./TextMessage";
+import { useAuthContext, useChatContext } from "@/hooks";
 
 export const InboxPeople = () => {
-  const msgs = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+  const { chatState } = useChatContext();
+  const { user } = useAuthContext();
 
   return (
     <>
-      <div className="flex-1 p-4 gap-3 flex flex-col overflow-y-auto">
-        {msgs.map((msg, index) =>
-          msg % 2 ? (
-            <Message key={index} text="hola mundo 2" position="start" />
+      <div className="flex-1 p-4 gap-4 flex flex-col overflow-y-auto">
+        {chatState.messages.map((msg) =>
+          (msg.from === user?.id) ? (
+            <Message key={msg.id} text={msg.message} date={msg.createdAt} position="end" />
           ) : (
-            <Message key={index} text="Hi sadasd a das " position="end" />
+            <Message key={msg.id} text={msg.message} date={msg.createdAt} position="start" />
           )
         )}
 
@@ -22,7 +24,6 @@ export const InboxPeople = () => {
       <Separator />
 
       <TextMessage
-        onSendMessage={(message) => console.log(message)}
         placeholder="Type a message..."
         disableCorrections
       />
