@@ -1,8 +1,8 @@
-import { AuthProvider } from "./context/AuthContext";
-import { Toaster } from "@/components/ui/sonner";
 import MainRoutes from "./routes/MainRoutes";
-import { SocketProvider } from "./context/SocketContext";
-import { ChatProvider } from "./context/ChatContext";
+import { Toaster } from "@/components/ui/sonner";
+import { ChatProvider } from "./provider/ChatProvider";
+import { AuthProvider } from "./provider/AuthProvider";
+import { SocketProvider } from "./provider/SocketProvider";
 
 export const App = () => {
   return (
