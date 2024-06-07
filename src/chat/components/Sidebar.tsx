@@ -1,11 +1,10 @@
-import { useAuth } from "@/hooks/useAuth";
 import { Separator } from "@/components/ui/separator";
-import { useChat } from "@/hooks/useChat";
 import { SidebarChatItem } from "./SidebarChatItem";
+import { useAuthContext, useChatContext } from "@/hooks";
 
 export const Sidebar = () => {
-  const { logout } = useAuth();
-  const { chatState } = useChat();
+  const { logout, user } = useAuthContext();
+  const { chatState } = useChatContext();
 
   return (
     <aside className="flex flex-col shadow w-72">
@@ -16,7 +15,7 @@ export const Sidebar = () => {
       </div>
       {/* chats */}
       <div className="flex-auto">
-        {chatState.users.map((user) => (
+        {chatState.users.filter(u => u.id !== user?.id).map((user) => (
           <SidebarChatItem key={user.id} user={user} />
         ))}
       </div>

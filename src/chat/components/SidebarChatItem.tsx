@@ -1,15 +1,15 @@
 import clsx from "clsx";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { useChatContext } from "@/hooks";
 import { User } from "@/interfaces";
-import { useChat } from "@/hooks/useChat";
 
 interface Props {
   user: User;
 }
 
 export const SidebarChatItem = ({ user }: Props) => {
-  const { chatState, dispatch } = useChat();
+  const { chatState, dispatch } = useChatContext();
 
   const handleChatClick = () => {
     dispatch({ type: "SelectChat", payload: { id: user.id! } });
