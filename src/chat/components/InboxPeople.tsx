@@ -2,8 +2,9 @@ import { Separator } from "@/components/ui/separator";
 import { Message } from "./Message";
 import { TextMessage } from "./TextMessage";
 import { useAuthContext, useChatContext } from "@/hooks";
+import { lazy } from "react";
 
-export const InboxPeople = () => {
+export default function InboxPeople() {
   const { chatState } = useChatContext();
   const { user } = useAuthContext();
 
@@ -39,4 +40,6 @@ export const InboxPeople = () => {
       <TextMessage placeholder="Type a message..." disableCorrections />
     </>
   );
-};
+}
+
+export const InboxPeopleLazy = lazy(() => import("./InboxPeople"));
