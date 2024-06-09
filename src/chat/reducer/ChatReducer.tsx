@@ -4,7 +4,9 @@ export type ChatAction =
   | { type: "SaveUsers"; payload: User[] }
   | { type: "SelectChat"; payload: { id: string } }
   | { type: "NewMessage"; payload: Message }
-  | { type: "LoadMessages"; payload: Message[] };
+  | { type: "LoadMessages"; payload: Message[] }
+  | { type: "Logout" };
+
 export const chatReducer = (
   state: ChatState,
   action: ChatAction
@@ -39,6 +41,13 @@ export const chatReducer = (
       return {
         ...state,
         messages: action.payload,
+      };
+    case "Logout":
+      return {
+        id: null,
+        chatActive: null,
+        users: [],
+        messages: [],
       }
     default:
       return state;

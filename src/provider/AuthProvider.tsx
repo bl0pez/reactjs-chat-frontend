@@ -1,7 +1,8 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import { fetchConToken, fetchSinToken, getLocalStorage, removeLocalStorage, setLocalStorage } from "@/helpers";
 import { AuthResponse, CheckStatus, LoginData, RegisterData, User, UserState } from "@/interfaces";
+import { useChatContext } from "@/hooks";
 
 const initialUserState: User = {
   id: null,
@@ -20,6 +21,7 @@ export const AuthProvider = ({ children }: Props) => {
   const [auth, setAuth] = useState<UserState>({ user: initialUserState });
   const [socketConnected, setSocketConnected] = useState<boolean>(false);
   const [checking, setChecking] = useState<CheckStatus>(CheckStatus.Pending);
+  const { dispatch } = useChatContext();
 
   const login = async ({ email, password }: LoginData) => {
     const { data, errorMessage } = await fetchSinToken<AuthResponse>({
@@ -99,6 +101,13 @@ export const AuthProvider = ({ children }: Props) => {
     setAuth({ user: initialUserState });
     setChecking(CheckStatus.LoggedOut);
   };
+
+  useEffect(() => {
+    if (auth?.user?.id) return;
+
+    dispatch({ type: "Logout" });
+
+  }, [auth, dispatch]);
 
   return (
     <AuthContext.Provider
