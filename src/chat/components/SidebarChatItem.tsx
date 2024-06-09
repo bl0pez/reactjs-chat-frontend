@@ -29,15 +29,17 @@ export const SidebarChatItem = ({ user }: Props) => {
     dispatch({ type: "LoadMessages", payload: data! })
   };
 
+  const splitName = user.name!.split(" ");
+  const name = splitName.length > 1 ? `${splitName[0]} ${splitName[1]}` : splitName[0];
   return (
     <div
       className={clsx(
-        "cursor-pointer transition-all bg-white",
-        chatState.chatActive === user.id && "bg-gray-200"
+        "cursor-pointer transition-all bg-white border-b-2 md:border-b-0 md:border-r-2",
+        chatState.chatActive === user.id && "border-primary"
       )}
       onClick={handleChatClick}
     >
-      <div className="flex gap-2 items-center py-2 px-3">
+      <div className="flex gap-2 flex-col md:flex-row items-center py-2 px-3">
         <Avatar
           className={clsx(
             "border-2",
@@ -52,7 +54,7 @@ export const SidebarChatItem = ({ user }: Props) => {
               .join("")}
           </AvatarFallback>
         </Avatar>
-        <h3>{user?.name}</h3>
+        <h3 className="text-sm w-24 text-center md:w-auto md:text-left truncate">{name}</h3>
       </div>
       <Separator />
     </div>
