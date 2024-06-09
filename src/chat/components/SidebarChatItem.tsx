@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { useChatContext } from "@/hooks";
 import { Message, User } from "@/interfaces";
-import { fetchConToken } from "@/helpers";
+import { fetchConToken, firstTwoLetters, userNameSplit } from "@/helpers";
 
 interface Props {
   user: User;
@@ -29,8 +29,6 @@ export const SidebarChatItem = ({ user }: Props) => {
     dispatch({ type: "LoadMessages", payload: data! })
   };
 
-  const splitName = user.name!.split(" ");
-  const name = splitName.length > 1 ? `${splitName[0]} ${splitName[1]}` : splitName[0];
   return (
     <div
       className={clsx(
@@ -48,13 +46,10 @@ export const SidebarChatItem = ({ user }: Props) => {
         >
           {/* <AvatarImage src="https://github.com/shadcn.png" /> */}
           <AvatarFallback>
-            {user!
-              .name!.split(" ")
-              .map((name) => name[0].toUpperCase())
-              .join("")}
+            {firstTwoLetters(user.name!)}
           </AvatarFallback>
         </Avatar>
-        <h3 className="text-sm w-24 text-center md:w-auto md:text-left truncate">{name}</h3>
+        <h3 className="text-sm w-24 text-center md:w-auto md:text-left truncate">{userNameSplit(user.name!)}</h3>
       </div>
       <Separator />
     </div>

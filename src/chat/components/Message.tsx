@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { monthHour } from "@/helpers";
+import { useAuthContext } from "@/hooks";
 import clsx from "clsx";
 
 interface Props {
@@ -9,6 +10,11 @@ interface Props {
 }
 
 export const Message = ({ text, position, date }: Props) => {
+  const { user } = useAuthContext();
+  const splitName = user!.name!.split(" ");
+  const name =
+    splitName.length > 1 ? `${splitName[0]} ${splitName[1]}` : splitName[0];
+
   return (
     <div
       className={clsx(
@@ -19,8 +25,13 @@ export const Message = ({ text, position, date }: Props) => {
     >
       {position === "start" && (
         <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarImage src={user?.avatar} />
+          <AvatarFallback>
+            {name!
+              .split(" ")
+              .map((name) => name[0].toUpperCase())
+              .join("")}
+          </AvatarFallback>
         </Avatar>
       )}
       <div className="flex flex-col gap-2">

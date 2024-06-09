@@ -55,6 +55,7 @@ export interface User {
   online: boolean;
   createdAt: Date | null;
   updatedAt: Date | null;
+  avatar?: string;
 }
 
 export interface Message {
